@@ -1,0 +1,279 @@
+﻿<!doctype html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>angular案例</title>
+	<script src="AngularJS.js"></script>
+</head>
+<body ng-app='app' ng-controller="myapp">
+	<input type="text" ng-model="uname" placeholder="用户名搜索">
+	<input type="text" ng-model="uphone" placeholder="手机号搜索">
+	<select name="" id="" ng-model="ucity">
+		<option >选择城市</option>
+		<option >北京</option>
+		<option >上海</option>
+		<option >广州</option>
+		<option >深圳</option>
+		<option >天津</option>
+		<option >西安</option>
+	</select>
+	<select name="" id="" ng-model="uzhai">
+		<option >状态</option>
+		<option >待发货</option>
+		<option >已发货</option>
+		<option >已签收</option>
+	</select>
+	<select name="" id="" ng-model="kai">
+		<option >开始月份</option>
+		<option >01</option>
+		<option >02</option>
+		<option >03</option>
+		<option >04</option>
+		<option >05</option>
+		<option >06</option>
+		<option >07</option>
+		<option >08</option>
+		<option >09</option>
+		<option >10</option>
+		<option >11</option>
+		<option >12</option>
+	</select>
+	-
+	<select name="" id="" ng-model="jie" ng-change="pan()">
+		<option >结束月份</option>
+		<option >01</option>
+		<option >02</option>
+		<option >03</option>
+		<option >04</option>
+		<option >05</option>
+		<option >06</option>
+		<option >07</option>
+		<option >08</option>
+		<option >09</option>
+		<option >10</option>
+		<option >11</option>
+		<option >12</option>
+	</select><br><br>
+	<button ng-click="newD()">新增订单</button>
+	<button ng-click="delete()" >批量删除</button>
+	<table border="solid 1px black">
+		<thead>
+			<tr>
+				<th><input type="checkbox" ng-model="check" ng-click="checkAll()"></th>
+				<th>
+					下标<span><button ng-click="pai('$index')">排序</button></span>
+				</th>
+				<th>
+					商品名称
+				</th>
+				<th>
+					用户名
+				</th>
+				<th>
+					手机号
+				</th>
+				<th>
+					价格<span><button ng-click="pai('price')">排序</button></span>
+				</th>
+				<th>
+					城市
+				</th>
+				<th>
+					下单时间<span><button ng-click="pai('time')">排序</button></span>
+				</th>
+				<th>
+					状态
+				</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr ng-repeat="item in data | filter:{'name':uname}|filter:{'phone':uphone}|filter:citys|filter:zhais|orderBy:sortname|filter:pan">
+				<td><input type="checkbox" ng-click="checks()" ng-model="item.done"></td>
+				<td>
+					{{$index}}
+				</td>
+				<td>
+					{{item.sname}}
+				</td>
+				<td>
+					{{item.name}}
+				</td>
+				<td>
+					{{item.phone}}
+				</td>
+				<td>
+					{{item.price|currency}}
+				</td>
+				<td>
+					{{item.city}}
+				</td>
+				<td>
+					{{item.time}}
+				</td>
+				<td ng-click="zhuang($index)">
+					{{item.zhai}}
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	<div ng-show="show">
+			<h2>新增订单</h2>
+			商品名：<input type="text" placeholder="请输入商品名" ng-model="newsname"><br>
+			用户名：<input type="text" placeholder="请输入用户名" ng-model="newname"><br>
+			手机号：<input type="text" placeholder="手机号" ng-model="newphone"><br>
+			价格：<input type="text" placeholder="请输入商品价格"ng-model="newprice"><br>
+			城市　：<select name="" id="" ng-model="newcity">
+			<option >选择城市</option>
+			<option >北京</option>
+			<option >上海</option>
+			<option >广州</option>
+			<option >深圳</option>
+			<option >天津</option>
+			<option >西安</option>
+		</select><br>
+		<div class="b" ng-show="b">
+			<p>商品名不能为空</p>
+			<p>商品名必须是六-十二个字符</p>
+			<p>用户名不能为空</p>
+			<p>手机号不能为空</p>
+		</div>
+
+		<button ng-click="subMit()">提交</button>
+	</div>
+	<script>
+		var app=angular.module('app',[]);
+		app.controller("myapp",function($scope){
+			//定义要用到的数据
+			$scope.data=[
+					{done:false,sname:'ipad',name:'张三',phone:'123654',price:4999,city:'西安',time:'1-10',zhai:"待发货"},
+					{done:false,sname:'零食',name:'赵四',phone:'1208208820',price:999,city:'北京',time:'1-10',zhai:"未发货"},
+					{done:false,sname:'鞋子',name:'王五',phone:'10086',price:666,city:'西安',time:'11-11',zhai:"已发货"},
+					{done:false,sname:'衣服',name:'王麻子',phone:'189878924',price:888,city:'上海',time:'11-11',zhai:"已签收"}
+				];
+				//新增订单是否显示
+				$scope.show=false;
+				$scope.newD=function(){
+					$scope.show=true;
+
+				}
+				$scope.uname='';
+				$scope.uphone="";
+				$scope.ucity="选择城市";
+				//城市查询
+				$scope.citys=function(item){
+					if($scope.ucity!='选择城市'){
+						if($scope.ucity== item.city){
+							return true;
+						}else{
+							false;
+						}
+					}else{
+						return true; 
+					}
+				}
+				//状态查询
+				$scope.uzhai="状态";
+				$scope.zhais=function(item){
+						if($scope.uzhai!='状态'){
+							if($scope.uzhai==item.zhai){
+								return true;
+							}else{
+								return false;
+							}
+						}else{
+							return true;
+						}
+				}
+				//状态变化
+				$scope.zhuang=function(index){
+					if($scope.data[index].zhai=='待发货'){
+						$scope.data[index].zhai='已发货';
+					}
+					if($scope.data[index].zhai=='已发货'){
+						$scope.data[index].zhai='已签收';
+					}
+				}
+				//排序
+				$scope.sortname="";
+				$scope.pai=function(name){
+					$scope.sortname=name;
+				}
+				//批量删除
+				$scope.delete=function(){
+					var n=0;
+					for(var i=0;i<$scope.data.length;i++){
+						if($scope.data[i].done==true){
+							$scope.data.splice(i,1);
+							n++;
+							i--;
+						}
+					}
+					if(n==0){
+						alert('请勾选！！');
+					}
+				}
+				//全选
+				$scope.check=false;
+				$scope.checkAll=function(){
+					for(var i=0;i<$scope.data.length;i++){
+						if($scope.check==true){
+							$scope.data[i].done=true;
+						}else{
+							$scope.data[i].done=false;
+						}
+					}
+				}
+				//全选按钮状态
+				$scope.checks=function(){
+					var n=0;
+					for(var i=0;i<$scope.data.length;i++){
+						if($scope.data[i].done==true){
+							n++;
+						}
+					}
+					if(n==$scope.data.length){
+						$scope.check=true;
+					}else{
+						$scope.check=false;
+					}
+				}
+				//日期
+				$scope.kai="开始月份";
+				$scope.jie="结束月份";
+				$scope.pan=function(){
+					if($scope.kai!='开始月份'&&$scope.jie!='结束月份'){
+						var kai=parseInt($scope.kai);
+						var jie=parseInt($scope.jie);
+						for(var i=0;i<$scope.data.length;i++){
+							var arr=$scope.data[i].time.split('-');
+							var da=arr[0];
+							console.log(da)
+							if(da>=kai && da<=jie){
+								return true;
+							}else{
+								return false;
+							}
+						}
+					}else{
+						return true;
+					}
+				}
+				//添加新客户
+				$scope.newsname="";
+				$scope.newphone="";
+				$scope.newname="";
+				$scope.newprice="";
+				$scope.newcity="选择城市";
+				$scope.b=false;
+				$scope.subMit=function(){
+					if($scope.newsname==""||$scope.newphone==""||$scope.newname==""||$scope.newprice==""||$scope.newcity=="请选择"){
+							$scope.b=true;
+					}else{
+						$scope.data.push({done:false,sname:$scope.newsname,name:$scope.newname,phone:$scope.newphone,price:$scope.newprice,city:$scope.newcity,time:'1-10',zhai:"待发货"});
+					}
+				}
+
+		})
+	</script>
+</body>
+</html>
